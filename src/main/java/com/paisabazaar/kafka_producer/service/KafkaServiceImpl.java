@@ -1,10 +1,11 @@
 package com.paisabazaar.kafka_producer.service;
 
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.json.JSONObject;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
-import org.springframework.util.concurrent.ListenableFutureCallback;
+
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class KafkaServiceImpl implements KafkaService {
@@ -16,19 +17,22 @@ public class KafkaServiceImpl implements KafkaService {
     }
 
     @Override
-    public void sendMessage(String topicName, String message) {
-        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(topicName, message);
-        future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
-            @Override
-            public void onSuccess(SendResult<String, String> result) {
-                System.out.println("Sent message=[" + message +
-                        "] with offset=[" + result.getRecordMetadata().offset() + "]");
-            }
-            @Override
-            public void onFailure(Throwable ex) {
-                System.out.println("Unable to send message=["
-                        + message + "] due to : " + ex.getMessage());
-            }
-        });
+    public JSONObject sendMessage(String topicName, String message) throws InterruptedException, ExecutionException {
+        JSONObject response = new JSONObject();
+        try {
+            RecordMetadata future = kafkaTemplate.send(topicName, message).get().getRecordMetadata();
+            response.put("topic", future.topic());
+            response.put("partition", future.partition());
+            response.put("offset", future.offset());
+        } catch (InterruptedException e) {
+        } catch (ExecutionException e) {
+        }
+        return response;
     }
+
+    @Override
+    public String sendMessage(String topicName, String message, Integer key, Integer partition) throws InterruptedException, ExecutionException {
+        return null;
+    }
+
 }
