@@ -7,7 +7,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 @Component
-public class KafkaServiceImpl {
+public class KafkaServiceImpl implements KafkaService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
@@ -15,12 +15,10 @@ public class KafkaServiceImpl {
         this.kafkaTemplate = kafkaTemplate;
     }
 
+    @Override
     public void sendMessage(String topicName, String message) {
-
         ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(topicName, message);
-
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
-
             @Override
             public void onSuccess(SendResult<String, String> result) {
                 System.out.println("Sent message=[" + message +

@@ -4,8 +4,7 @@ import com.paisabazaar.kafka_producer.model.Producer;
 import com.paisabazaar.kafka_producer.repository.ProducerRepository;
 import com.paisabazaar.kafka_producer.service.ApplicationUtilsService;
 import com.paisabazaar.kafka_producer.service.KafkaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.paisabazaar.kafka_producer.utils.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -59,7 +57,7 @@ public class ProducerController {
     @PutMapping("/producer/{id}")
     public ResponseEntity<Producer> updateProducer(@PathVariable String id, @RequestBody Producer payload) {
         // Update producer
-        Producer p = producerRepository.findById(id).get();
+        Producer p = producerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Producer", "id", id));
         applicationUtilsService.copyNonNullProperties(payload, p);
         producerRepository.save(p);
         // ## Need to implement custom exception handler and custom response handler
@@ -73,11 +71,11 @@ public class ProducerController {
     }
 
     @PostMapping("/produce_messages")
-    public ResponseEntity<?> produceMessage(@Header(value = "x-producer-id") String id) {
+    public ResponseEntity<?> produceMessage(@Header(value = "x-producer-id") String id, @RequestBody Object message) {
         // ## Get Topic from producer id
-        String p = producerRepository.findById(id).get().getTopic();
+        String topic = producerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Producer", "id", id)).getTopic();
         // ## Produce to kafka
-        // kafkaService.sendMessage(topic, );
+        kafkaService.sendMessage(topic, message.toString());
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 }
