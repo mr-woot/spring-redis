@@ -1,10 +1,12 @@
 package com.paisabazaar.kafka_producer.service;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -17,22 +19,16 @@ public class KafkaServiceImpl implements KafkaService {
     }
 
     @Override
-    public JSONObject sendMessage(String topicName, String message) throws InterruptedException, ExecutionException {
-        JSONObject response = new JSONObject();
-        try {
-            RecordMetadata future = kafkaTemplate.send(topicName, message).get().getRecordMetadata();
-            response.put("topic", future.topic());
-            response.put("partition", future.partition());
-            response.put("offset", future.offset());
-        } catch (InterruptedException e) {
-        } catch (ExecutionException e) {
-        }
-        return response;
-    }
-
-    @Override
-    public String sendMessage(String topicName, String message, Integer key, Integer partition) throws InterruptedException, ExecutionException {
+    public JSONObject sendMessage(String topicName, Integer partition, String key, String message) throws InterruptedException, ExecutionException {
+        kafkaTemplate.send(topicName, partition, key, message);
         return null;
     }
 
+    @Override
+    public JSONArray sendMessagesInBatch(String topic, Integer partition, String key, Map<String, Object>[] messages) throws ExecutionException, InterruptedException {
+        for (int i = 0; i < messages.length; i++) {
+            this.sendMessage(topic, partition, key, messages[i].toString());
+        }
+        return null;
+    }
 }

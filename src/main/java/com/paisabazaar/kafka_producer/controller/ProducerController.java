@@ -7,6 +7,7 @@ import com.paisabazaar.kafka_producer.service.KafkaService;
 import com.paisabazaar.kafka_producer.service.ResponseFormatter;
 import com.paisabazaar.kafka_producer.utils.ResourceNotFoundException;
 import com.paisabazaar.kafka_producer.utils.ResponseCode;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -107,7 +109,7 @@ public class ProducerController {
             JSONObject response = responseFormatter.buildResponse(
                     "success",
                     HttpStatus.OK.value(),
-                    null,
+                    (JSONObject) null,
                     "Producer Deleted");
             return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
         } else {
@@ -121,16 +123,35 @@ public class ProducerController {
     }
 
     @PostMapping(value = "/produce_messages", produces = "application/json")
-    public ResponseEntity<?> produceMessages(@RequestHeader(value = "x-producer-id") String id, @RequestBody String message) throws ExecutionException, InterruptedException {
-        // ## Get Topic from producer id
-        String topic = producerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Producer", "id", id)).getTopic();
-        // ## Produce to kafka
-        JSONObject x = kafkaService.sendMessage(topic, message);
-        // Response build
-        JSONObject response = responseFormatter.buildResponse(
-                "success", HttpStatus.OK.value(),
-                x,
-                "Message produced");
-        return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
+    public ResponseEntity<?> produceMessages(@RequestHeader(value = "x-producer-id") String id,
+                                             @RequestParam(value = "key", required = false) String key,
+                                             @RequestParam(value = "partition", required = false) Integer partition,
+                                             @RequestBody Map<String, Object>[] messages) throws ExecutionException, InterruptedException {
+        // Get Topic from producer id
+        if (!producerRepository.existsById(id)) {
+            JSONObject response = responseFormatter.buildErrorResponse(
+                    "error",
+                    ResponseCode.PRODUCER_NOT_RETRIEVED.getCode(),
+                    new JSONObject().put("message", ResponseCode.PRODUCER_NOT_RETRIEVED.getMessage())
+            );
+            return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
+        } else {
+            String topic = producerRepository.findById(id).get().getTopic();
+            // Produce to kafka
+            JSONArray data;
+            if (partition != null) {
+                data = kafkaService.sendMessagesInBatch(topic, partition, null, messages);
+            } else if (key != null) {
+                data = kafkaService.sendMessagesInBatch(topic, null, key, messages);
+            } else {
+                data = kafkaService.sendMessagesInBatch(topic, null, null, messages);
+            }
+            // Response build
+            JSONObject response = responseFormatter.buildResponse(
+                    "success", HttpStatus.OK.value(),
+                    data,
+                    messages.length > 1 ? "Messages produced" : "Message produced");
+            return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
+        }
     }
 }
