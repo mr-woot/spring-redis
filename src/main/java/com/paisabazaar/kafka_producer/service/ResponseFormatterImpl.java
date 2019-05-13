@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 /**
  * Contributed By: Tushar Mudgal
  * On: 10/5/19
@@ -19,6 +21,15 @@ public class ResponseFormatterImpl implements ResponseFormatter {
         response.put("code", code);
         response.put("data", data);
         response.put("message", message);
+        return response;
+    }
+
+    @Override
+    public JSONObject buildErrorResponse(String status, Integer code, JSONObject error) {
+        JSONObject response = new JSONObject();
+        response.put("status", status);
+        response.put("code", code);
+        response.put("error", error);
         return response;
     }
 }

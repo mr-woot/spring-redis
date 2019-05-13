@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+
 /**
  * Contributed By: Tushar Mudgal
  * On: 10/5/19
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ResponseFormatter {
     JSONObject buildResponse(String status, Integer code, JSONObject data, String message);
+    JSONObject buildErrorResponse(String status, Integer code, JSONObject error);
 }
