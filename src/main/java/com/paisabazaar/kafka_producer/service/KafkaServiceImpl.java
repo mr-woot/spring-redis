@@ -5,11 +5,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@Component
+@Service
 public class KafkaServiceImpl implements KafkaService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

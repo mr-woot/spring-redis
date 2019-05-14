@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@Service
 public interface KafkaService {
     JSONObject sendMessage(String topicName, Integer partition, String key, String message) throws InterruptedException, ExecutionException;
 
