@@ -1,10 +1,8 @@
 package com.paisabazaar.kafka_producer.service;
 
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,8 +24,9 @@ public class KafkaServiceImpl implements KafkaService {
     }
 
     @Override
-    public JSONArray sendMessagesInBatch(String topic, Integer partition, String key, Map<String, Object>[] messages) throws ExecutionException, InterruptedException {
+    public JSONArray sendMessagesInBatch(String topic, Integer partition, String key, Map<String, Object>[] messages, String metadata) throws ExecutionException, InterruptedException {
         for (int i = 0; i < messages.length; i++) {
+            // ## Validate message with metadata
             this.sendMessage(topic, partition, key, messages[i].toString());
         }
         return null;

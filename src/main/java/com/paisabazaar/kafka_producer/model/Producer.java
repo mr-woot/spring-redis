@@ -22,19 +22,22 @@ public class Producer implements Serializable {
 
     private Long retention;
 
+    private String metadata;
+
     private Long expiry;
 
     private Date createdAt;
 
     private Date updatedAt;
 
-    public Producer(String id, String buName, String type, String topic, String purpose, Long retention, Long expiry, Date createdAt, Date updatedAt) {
+    public Producer(String id, String buName, String type, String topic, String purpose, Long retention, String metadata, Long expiry, Date createdAt, Date updatedAt) {
         this.id = id;
         this.buName = buName;
         this.type = type;
         this.topic = topic;
         this.purpose = purpose;
         this.retention = retention;
+        this.metadata = metadata;
         this.expiry = expiry;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -49,10 +52,19 @@ public class Producer implements Serializable {
                 ", topic='" + topic + '\'' +
                 ", purpose='" + purpose + '\'' +
                 ", retention=" + retention +
+                ", metadata='" + metadata + '\'' +
                 ", expiry=" + expiry +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     public String getPurpose() {

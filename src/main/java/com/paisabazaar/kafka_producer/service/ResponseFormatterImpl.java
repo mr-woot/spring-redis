@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
  * Contributed By: Tushar Mudgal
  * On: 10/5/19
  */
-@Component
+@Service
 public class ResponseFormatterImpl implements ResponseFormatter {
     @Override
     public JSONObject buildResponse(String status, Integer code, JSONObject data, String message) {

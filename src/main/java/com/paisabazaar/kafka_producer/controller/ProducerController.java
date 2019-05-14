@@ -136,15 +136,17 @@ public class ProducerController {
             );
             return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
         } else {
-            String topic = producerRepository.findById(id).get().getTopic();
+            Producer producer = producerRepository.findById(id).get();
+            String metadata = producer.getMetadata();
+            String topic = producer.getTopic();
             // Produce to kafka
             JSONArray data;
             if (partition != null) {
-                data = kafkaService.sendMessagesInBatch(topic, partition, null, messages);
+                data = kafkaService.sendMessagesInBatch(topic, partition, null, messages, metadata);
             } else if (key != null) {
-                data = kafkaService.sendMessagesInBatch(topic, null, key, messages);
+                data = kafkaService.sendMessagesInBatch(topic, null, key, messages, metadata);
             } else {
-                data = kafkaService.sendMessagesInBatch(topic, null, null, messages);
+                data = kafkaService.sendMessagesInBatch(topic, null, null, messages, metadata);
             }
             // Response build
             JSONObject response = responseFormatter.buildResponse(

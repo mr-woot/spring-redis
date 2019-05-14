@@ -4,11 +4,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
+@Service
 public class ApplicationUtilsServiceImpl implements ApplicationUtilsService {
     @Override
     public void copyNonNullProperties(Object source, Object target) {
@@ -27,4 +28,10 @@ public class ApplicationUtilsServiceImpl implements ApplicationUtilsService {
         return emptyNames.toArray(result);
     }
 
+    @Override
+    public boolean validateMessage(String message, String metadata) {
+        return false;
+    }
+
+//    private Map<> jsonStringToMap()
 }
