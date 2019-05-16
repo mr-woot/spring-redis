@@ -11,7 +11,7 @@
     <groupId>com.paisabazaar</groupId>
     <artifactId>kafka_producer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>kafka_producer</name>
     <description>Kafka producer project for Spring Boot</description>
     <properties>
