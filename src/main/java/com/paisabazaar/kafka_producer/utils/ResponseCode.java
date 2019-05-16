@@ -6,6 +6,7 @@ package com.paisabazaar.kafka_producer.utils;
  */
 public enum ResponseCode {
     PRODUCER_NOT_RETRIEVED(3001, "Producer not retrieved"),
+    PRODUCER_ID_IS_REQUIRED(3002, "Producer id is required"),
     MESSAGES_NOT_PRODUCED(3201, "Messages not retrieved"),
 
     INVALID_MESSAGES_FORMAT(1002, "Invalid messages format"),
@@ -14,9 +15,8 @@ public enum ResponseCode {
     BUNAME_TYPE_DUPLICATE(1201, "BuName & type (buName.type) already exists"),
 
     KAFKA_BROKER_UNREACHABLE(8000, "Kafka Broker unreachable"),
-    REDIS_UNREACHABLE(8001, "Redis unreachable"),
+    REDIS_UNREACHABLE(8001, "Redis unreachable")
     ;
-
     private int code;
     private String message;
     private String text;

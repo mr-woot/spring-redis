@@ -131,12 +131,26 @@ public class ProducerController {
     }
 
     @PostMapping(value = "/produce_messages", produces = "application/json")
-    public ResponseEntity<?> produceMessages(@RequestHeader(value = "x-producer-id") String id,
+    public ResponseEntity<?> produceMessages(@RequestHeader(value = "x-producer-id", required = false) String id,
+                                             @RequestParam(value = "producer_id", required = false) String producer_id,
                                              @RequestParam(value = "key", required = false) String key,
                                              @RequestParam(value = "partition", required = false) Integer partition,
                                              @RequestBody Map<String, Object>[] messages) throws ExecutionException, InterruptedException {
+        String ID = null;
+        if (id == null && producer_id == null) {
+            JSONObject response = responseFormatter.buildErrorResponse(
+                    "error",
+                    ResponseCode.PRODUCER_ID_IS_REQUIRED.getCode(),
+                    new JSONObject().put("message", ResponseCode.PRODUCER_ID_IS_REQUIRED.getMessage())
+            );
+            return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
+        } else if (id != null) {
+            ID = id;
+        } else {
+            ID = producer_id;
+        }
         // Get Topic from producer id
-        if (!producerRepository.existsById(id)) {
+        if (!producerRepository.existsById(ID)) {
             JSONObject response = responseFormatter.buildErrorResponse(
                     "error",
                     ResponseCode.PRODUCER_NOT_RETRIEVED.getCode(),
@@ -144,7 +158,7 @@ public class ProducerController {
             );
             return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
         } else {
-            Producer producer = producerRepository.findById(id).get();
+            Producer producer = producerRepository.findById(ID).get();
             String metadata = producer.getMetadata();
             String topic = producer.getTopic();
             // Produce to kafka
@@ -161,7 +175,7 @@ public class ProducerController {
                     "success", HttpStatus.OK.value(),
                     data,
                     messages.length > 1 ? "Messages produced" : "Message produced");
-            LOGGER.info(response.put("producerId", id).toString(4));
+            LOGGER.info(response.put("producerId", ID).toString(4));
             return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
         }
     }
