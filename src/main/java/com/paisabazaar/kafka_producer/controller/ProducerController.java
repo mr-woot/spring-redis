@@ -5,14 +5,13 @@ import com.paisabazaar.kafka_producer.repository.ProducerRepository;
 import com.paisabazaar.kafka_producer.service.ApplicationUtilsService;
 import com.paisabazaar.kafka_producer.service.KafkaService;
 import com.paisabazaar.kafka_producer.service.ResponseFormatter;
-import com.paisabazaar.kafka_producer.utils.ResourceNotFoundException;
 import com.paisabazaar.kafka_producer.utils.ResponseCode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -24,6 +23,8 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/PB_DATAPIPE_PRODUCER")
 public class ProducerController {
+
+    private static final Logger LOGGER = LogManager.getLogger(ProducerController.class);
 
     private final ResponseFormatter responseFormatter;
 
@@ -53,6 +54,7 @@ public class ProducerController {
                 "success", HttpStatus.OK.value(),
                 data.getJSONObject("producer"),
                 "Fetched successfully");
+        LOGGER.info("Producers fetched successfully");
         return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
     }
 
@@ -73,6 +75,7 @@ public class ProducerController {
                 "success", HttpStatus.OK.value(),
                 data,
                 "Producer created");
+        LOGGER.info("Producer created with id: " + producer.getId());
         return new ResponseEntity<>(response.toMap(), HttpStatus.CREATED);
     }
 
@@ -85,6 +88,7 @@ public class ProducerController {
                     ResponseCode.PRODUCER_NOT_RETRIEVED.getCode(),
                     new JSONObject().put("message", ResponseCode.PRODUCER_NOT_RETRIEVED.getMessage())
             );
+            LOGGER.error("Producer not found with id: " + id);
             return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
         }
         Producer p = producerRepository.findById(id).get();
@@ -98,6 +102,7 @@ public class ProducerController {
                 "success", HttpStatus.OK.value(),
                 data,
                 "Producer updated");
+        LOGGER.info("Producer updated with id: " + p.getId());
         return new ResponseEntity<>(response.toMap(), HttpStatus.CREATED);
     }
 
@@ -111,6 +116,7 @@ public class ProducerController {
                     HttpStatus.OK.value(),
                     (JSONObject) null,
                     "Producer Deleted");
+            LOGGER.info("Producer deleted with id: " + id);
             return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
         } else {
             JSONObject response = responseFormatter.buildErrorResponse(
@@ -118,6 +124,7 @@ public class ProducerController {
                     ResponseCode.PRODUCER_NOT_RETRIEVED.getCode(),
                     new JSONObject().put("message", ResponseCode.PRODUCER_NOT_RETRIEVED.getMessage())
             );
+            LOGGER.info("Producer not found with id: " + id);
             return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
         }
     }
@@ -153,6 +160,7 @@ public class ProducerController {
                     "success", HttpStatus.OK.value(),
                     data,
                     messages.length > 1 ? "Messages produced" : "Message produced");
+            LOGGER.info(response.put("producerId", id).toString(4));
             return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
         }
     }

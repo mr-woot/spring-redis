@@ -3,6 +3,8 @@ package com.paisabazaar.kafka_producer.model;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
  * Contributed By: Tushar Mudgal
  * On: 10/5/19
@@ -18,6 +20,8 @@ public class Response {
 
     private Object error;
 
+    private String messageId;
+
     public Response(String status, int code, Object data, String message) {
         this.status = status;
         this.code = code;
@@ -27,12 +31,14 @@ public class Response {
             this.data = data;
         }
         this.message = message;
+        this.messageId = UUID.randomUUID().toString();
     }
 
     public Response(String status, int code, Object error) {
         this.status = status;
         this.code = code;
         this.error = error;
+        this.messageId = UUID.randomUUID().toString();
     }
 
     @Override
@@ -43,6 +49,7 @@ public class Response {
                 ", data=" + data +
                 ", message='" + message + '\'' +
                 ", error=" + error +
+                ", messageId='" + messageId + '\'' +
                 '}';
     }
 }

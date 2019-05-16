@@ -32,6 +32,4 @@ public class ApplicationUtilsServiceImpl implements ApplicationUtilsService {
     public boolean validateMessage(String message, String metadata) {
         return false;
     }
-
-//    private Map<> jsonStringToMap()
 }

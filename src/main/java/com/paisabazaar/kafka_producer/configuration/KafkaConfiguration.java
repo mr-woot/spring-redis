@@ -20,6 +20,30 @@ public class KafkaConfiguration {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
+    @Value(value = "${kafka.clientId}")
+    private String clientId;
+
+    @Value(value = "${kafka.acks}")
+    private String acks;
+
+    @Value(value = "${kafka.retries}")
+    private String retries;
+
+    @Value(value = "${kafka.batchSize}")
+    private String batchSize;
+
+    @Value(value = "${kafka.lingerMs}")
+    private String lingerMs;
+
+    @Value(value = "${kafka.bufferMemory}")
+    private String bufferMemory;
+
+//    @Value(value = "${kafka.retryBackoffMs}")
+//    private String retryBackoffMs;
+
+    @Value(value = "${kafka.compressionType}")
+    private String compressionType;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
@@ -30,15 +54,35 @@ public class KafkaConfiguration {
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
+        // bootstrap.servers
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 bootstrapAddress);
+        // producer key serializer
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        // produer value serializer
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
+        // clientId
+        configProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+        // acks
+        configProps.put(ProducerConfig.ACKS_CONFIG, acks);
+        // retries
+        configProps.put(ProducerConfig.RETRIES_CONFIG, retries);
+        // batch.size
+        configProps.put(ProducerConfig.BATCH_SIZE_CONFIG, batchSize);
+        // linger.ms
+        configProps.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
+        // buffer.memory
+        configProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG, bufferMemory);
+        // retry.backoff.ms
+//        configProps.put(ProducerConfig)
+        // exactly once
+        configProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, compressionType);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
