@@ -14,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -44,9 +41,13 @@ public class ProducerController {
     @GetMapping(value = "/producer", produces = "application/json")
     public ResponseEntity<?> getProducers() {
         HashMap<String, Object> producersMap = new HashMap<>();
-        producerRepository.findAll().forEach(producer -> {
-            producersMap.put(producer.getId(), producer);
-        });
+        Iterator iterator = producerRepository.findAll().iterator();
+        while (iterator.hasNext()) {
+            Producer p = (Producer) iterator.next();
+            if (p != null) {
+                producersMap.put(p.getId(), p);
+            }
+        }
         // ## Need to implement custom exception handler and custom response handler
         JSONObject data = new JSONObject();
         data.put("producer", producersMap);
