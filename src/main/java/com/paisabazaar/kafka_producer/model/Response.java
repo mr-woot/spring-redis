@@ -3,6 +3,7 @@ package com.paisabazaar.kafka_producer.model;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,7 @@ public class Response {
     public Response(String status, int code, Object data, String message) {
         this.status = status;
         this.code = code;
-        if (data.getClass().getName() == "string") {
+        if (Objects.equals(data.getClass().getName(), "string")) {
             this.data = data.toString();
         } else {
             this.data = data;
