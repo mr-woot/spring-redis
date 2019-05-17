@@ -1,14 +1,8 @@
 package com.paisabazaar.kafka_producer.service;
 
-import com.paisabazaar.kafka_producer.model.Response;
-import com.paisabazaar.kafka_producer.utils.ResponseCode;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 
 /**
  * Contributed By: Tushar Mudgal
