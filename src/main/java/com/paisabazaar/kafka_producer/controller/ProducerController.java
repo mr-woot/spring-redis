@@ -41,6 +41,35 @@ public class ProducerController {
         this.responseFormatter = responseFormatter;
     }
 
+    @GetMapping(value = "/monitor/producer", produces = "application/json")
+    public ResponseEntity<?> healthCheck() {
+        JSONObject response = new JSONObject();
+        response.put("status", HttpStatus.OK);
+        response.put("message", "pong");
+        return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/producer/{id}", produces = "application/json")
+    public ResponseEntity<?> getProducer(@PathVariable String id) {
+        if (producerRepository.existsById(id)) {
+            Producer p = producerRepository.findById(id).get();
+            JSONObject response = responseFormatter.buildResponse(
+                    "success", HttpStatus.OK.value(),
+                    new JSONObject(p),
+                    "Fetched successfully");
+            LOGGER.info("Producer fetched successfully");
+            return new ResponseEntity<>(response.toMap(), HttpStatus.OK);
+        } else {
+            JSONObject response = responseFormatter.buildErrorResponse(
+                    "error",
+                    ResponseCode.PRODUCER_NOT_RETRIEVED.getCode(),
+                    new JSONObject().put("message", ResponseCode.PRODUCER_NOT_RETRIEVED.getMessage())
+            );
+            LOGGER.error("Producer not found with id: " + id);
+            return new ResponseEntity<>(response.toMap(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping(value = "/producer", produces = "application/json")
     public ResponseEntity<?> getProducers() {
         HashMap<String, Object> producersMap = new HashMap<>();

@@ -15,8 +15,7 @@ public enum ResponseCode {
     BUNAME_TYPE_DUPLICATE(1201, "BuName & type (buName.type) already exists"),
 
     KAFKA_BROKER_UNREACHABLE(8000, "Kafka Broker unreachable"),
-    REDIS_UNREACHABLE(8001, "Redis unreachable")
-    ;
+    REDIS_UNREACHABLE(8001, "Redis unreachable");
     private int code;
     private String message;
     private String text;

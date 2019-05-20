@@ -1,8 +1,5 @@
 package com.paisabazaar.kafka_producer.model;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 import java.util.UUID;
 

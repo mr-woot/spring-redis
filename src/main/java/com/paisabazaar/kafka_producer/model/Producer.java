@@ -2,7 +2,6 @@ package com.paisabazaar.kafka_producer.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.stereotype.Indexed;
 
 import java.io.Serializable;
 import java.util.Date;

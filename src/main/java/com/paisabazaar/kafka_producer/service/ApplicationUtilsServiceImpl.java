@@ -3,7 +3,6 @@ package com.paisabazaar.kafka_producer.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
