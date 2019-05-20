@@ -3,6 +3,9 @@ package com.paisabazaar.kafka_producer.configuration;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfiguration {
+    private static final Logger LOGGER = LogManager.getLogger(KafkaConfiguration.class);
 
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
@@ -82,6 +86,8 @@ public class KafkaConfiguration {
 //        configProps.put(ProducerConfig)
         // exactly once
         configProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, compressionType);
+
+        LOGGER.debug("Kafka Configuration --- " + new JSONObject(configProps).toString(4));
 
         return new DefaultKafkaProducerFactory<>(configProps);
     }
